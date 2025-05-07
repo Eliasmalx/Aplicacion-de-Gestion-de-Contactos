@@ -1,19 +1,23 @@
-// ContactContext.js
-import { createContext, useContext, useReducer } from "react";
-import { contactReducer, initialState } from "./store"; // ruta correcta
 
-const ContactContext = createContext();
+import { useContext, useReducer, createContext, useState } from "react";
+import storeReducer, { initialStore } from "../store"
 
-export function ContactProvider({ children }) {
-    const [state, dispatch] = useReducer(contactReducer, initialState);
 
-    return (
-        <ContactContext.Provider value={{ state, dispatch }}>
-            {children}
-        </ContactContext.Provider>
-    );
+const StoreContext = createContext()
+
+
+export function StoreProvider({ children }) {
+
+    const [store, dispatch] = useReducer(storeReducer, initialStore)
+    const [isLoading, setLoading] = useState(true)
+
+    return <StoreContext.Provider value={{ store, dispatch, isLoading, setLoading }}>
+        {children}
+    </StoreContext.Provider>
 }
 
-export function useContactContext() {
-    return useContext(ContactContext);
+
+export default function useGlobalReducer() {
+    const { dispatch, store } = useContext(StoreContext)
+    return { dispatch, store };
 }
